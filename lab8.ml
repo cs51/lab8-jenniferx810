@@ -123,7 +123,7 @@ decide how to implement this.
                                                    
   let add_listener (evt : 'a event) (listener : 'a -> unit) : id =
     let id = new_id () in
-    evt := {id ; action = listener} :: !evt ;;
+    evt := {id ; action = listener} :: !evt ;
     id
 
 (*......................................................................
@@ -133,7 +133,7 @@ one. If there is no listener with that id, do nothing.
 ......................................................................*)
             
   let remove_listener (evt : 'a event) (i : id) : unit =
-    evt := List.filter (fun x -> x.id <> i) evt
+    evt := List.filter (fun x -> x.id <> i) !evt
 
 (*......................................................................
 Exercise 3: Write fire_event, which will execute all event handlers
@@ -157,9 +157,9 @@ and publish the headlines. *)
 Exercise 4: Given your implementation of Event, create a new event
 called "newswire" that should pass strings to the event handlers.
 ......................................................................*)
-open WEVENT
+open WEvent ;;
   
-let newswire = fun _ -> new_event () ;;
+let newswire = new_event ();;
 
 (* News organizations might want to register event listeners to the
 newswire so that they might report on stories. Below are functions
@@ -226,8 +226,8 @@ waiting for the publish event.
 ......................................................................*)
 
 let receive_report s = 
-  ignore (add_listener publish (fun () -> fakeNewsNetwork));
-  add_listener publish (fun () -> buzzFake s);;
+  ignore (add_listener publish (fun () -> fakeNewsNetwork s));
+  ignore (add_listener publish (fun () -> buzzFake s));;
 
 (*......................................................................
 Exercise 10: Register the receieve_report listener to listen for the
